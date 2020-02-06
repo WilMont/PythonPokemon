@@ -1,0 +1,7 @@
+<TextureAtlas imagePath="sprites.png">
+	<SubTexture name="BagSpritesheet_18.png" x="0" y="0" width="51" height="60"/>
+	<SubTexture name="BagSpritesheet_19.png" x="48" y="186" width="46" height="62"/>
+	<SubTexture name="BagSpritesheet_20.png" x="0" y="62" width="51" height="60"/>
+	<SubTexture name="BagSpritesheet_21.png" x="0" y="124" width="48" height="60"/>
+	<SubTexture name="BagSpritesheet_22.png" x="0" y="186" width="46" height="64"/>
+</TextureAtlas>

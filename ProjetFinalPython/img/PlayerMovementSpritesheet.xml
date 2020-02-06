@@ -1,0 +1,12 @@
+<TextureAtlas imagePath="sprites.png">
+	<SubTexture name="Spritesheet_pkmn-EmeraldM_02.png" x="0" y="23" width="14" height="21"/>
+	<SubTexture name="Spritesheet_pkmn-EmeraldM_03.png" x="0" y="0" width="14" height="21"/>
+	<SubTexture name="Spritesheet_pkmn-EmeraldM_05.png" x="0" y="92" width="14" height="21"/>
+	<SubTexture name="Spritesheet_pkmn-EmeraldM_06.png" x="16" y="46" width="14" height="21"/>
+	<SubTexture name="Spritesheet_pkmn-EmeraldM_07.png" x="16" y="23" width="14" height="21"/>
+	<SubTexture name="Spritesheet_pkmn-EmeraldM_08.png" x="16" y="46" width="14" height="21"/>
+	<SubTexture name="Spritesheet_pkmn-EmeraldM_09.png" x="16" y="0" width="14" height="21"/>
+	<SubTexture name="Spritesheet_pkmn-EmeraldM_10.png" x="16" y="69" width="14" height="21"/>
+	<SubTexture name="Spritesheet_pkmn-EmeraldM_11.png" x="0" y="69" width="14" height="21"/>
+	<SubTexture name="Spritesheet_pkmn-EmeraldM_13.png" x="0" y="46" width="14" height="21"/>
+</TextureAtlas>
