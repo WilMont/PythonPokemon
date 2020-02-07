@@ -23,7 +23,7 @@
 ![Interagir avec le magasin] https://raw.githubusercontent.com/WillMont/PythonPokemon/master/ImagesGuide/Magasin.jpg
 
 - Vous pouvez intéragir avec la touche "A" (Action) de votre clavier en vous tenant dans les hautes herbes (en bas de la carte) pour commencer un combat contre un Pokemon sauvage.
-![Commencer un combat] https://raw.githubusercontent.com/WillMont/PythonPokemon/master/ImagesGuide/RecherchePokemon.jpg
+![Commencer un combat] https://raw.githubusercontent.com/WilMont/PythonPokemon/blob/master/ImagesGuide/Combat.JPG
 
 - Présentation de l'interface, avec la partie gauche du menu pour les attaques et la partie droite pour les pokéballs disponibles.
 ![Combattre ou capturer un Pokmon] https://raw.githubusercontent.com/WillMont/PythonPokemon/master/ImagesGuide/Combat.jpg
