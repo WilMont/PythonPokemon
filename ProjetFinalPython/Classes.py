@@ -53,7 +53,6 @@ class InvisibleObject():
         self.rectangleSurface.fill(color)         # Rempli la surface avec la couleur donnée en paramètre (format RVB).
         gameDisplay.blit(self.rectangleSurface, (posX,posY))    # Dessine la surface dans la fenêtre du jeu.
 
-        #Données: 1 arbre = 65px longueur / 75px hauteur.
 
 """
 Class Pokemon.

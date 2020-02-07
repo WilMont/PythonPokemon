@@ -138,8 +138,10 @@ def openWildCombat():
     global wildCombatIsRunning
     wildCombatIsRunning = True
 
-    # Variable turn=1 si tour du joueur1, turn=2 si tour du pokemon sauvage.
+    global turn
     turn = 1
+
+    # Variable turn=1 si tour du joueur1, turn=2 si tour du pokemon sauvage.
 
     combatBackgroundImage = pygame.image.load('ProjetFinalPython/img/combatBackground.png')
     gameDisplay.blit(combatBackgroundImage, [0,0])
@@ -184,13 +186,17 @@ def openWildCombat():
     healthbarWildPokemon.fill(GREEN)
     gameDisplay.blit(healthbarWildPokemon, [595,90])
     pygame.draw.rect(gameDisplay, BLACK, (595, 90, wildPokemonCurrentHp, 10), 2)
+    # Points de vie du pokémon du joueur 1 sous forme "PV/PVMAX".
+    combatTextFont = pygame.font.SysFont("courier",10)
+    player1PokemonHpString = str(str(player1CurrentPokemon.currentHp) + "/" + str(player1CurrentPokemon.baseHp))
+    player1PokemonHpText = combatTextFont.render(player1PokemonHpString, True, BLACK)
+    gameDisplay.blit(player1PokemonHpText, [535,90])
 
-    # Interface grise en bas de l'écran.
+    # Interface grise en bas de l'écran contenant les boutons.
     pygame.draw.rect(gameDisplay, GREY, (0, 445, 800, 200), 5)
     rectangleMenu1 = pygame.Surface((800,200))
     rectangleMenu1.fill(WHITE)
     gameDisplay.blit(rectangleMenu1, (0,445))
-    pygame.draw.rect(gameDisplay, GREY, (0, 445, 700, 200), 5) # Rectangle de gauche contenant les attaques du pokémon ou les pokeballs.
     rectangleMenu2 = pygame.Surface((700,200))
     rectangleMenu2.fill(WHITE)
     gameDisplay.blit(rectangleMenu2, (0,445))
@@ -200,19 +206,52 @@ def openWildCombat():
     gameDisplay.blit(rectangleMenu3, (500,345))
     pygame.draw.rect(gameDisplay, GREY, (0, 445, 400, 200), 5)
 
-    def attackSystem(attack: Attack, target: Pokemon):
+    # Fonction de combat qui enlève les PV des pokémons selon les attaques puis signale la fin du combat.
+    def attackSystem(attack: Attack, target: Pokemon, turn):
         target.currentHp = target.currentHp - attack.power
         if target.currentHp == 0 or target.currentHp < 0:
-            informationString = "The opponent Pokemon is K.O. \n You won $200"
+            combatTextFont = pygame.font.SysFont("courier",20)
+            informationString = "Foe Pokemon is K.O."
+            informationText = combatTextFont.render(informationString, True, BLACK)
             gameDisplay.blit(informationText, [510,350])
+            informationString = "You won $200 !"
+            informationText = combatTextFont.render(informationString, True, BLACK)
+            gameDisplay.blit(informationText, [510,370])
+            informationString = "Press A to continue"
+            informationText = combatTextFont.render(informationString, True, BLACK)
+            gameDisplay.blit(informationText, [510,390])
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q:
+                    closeWildCombat()
         elif target.currentHp > 0 and turn == 1:
             turn = 2
         elif target.currentHp > 0 and turn == 2:
             turn = 1
 
+    # Fonction de capture des pokémons sauvages.
+    def catchSystem(pokeball: Pokeball, target: Pokemon):
+        randomChances = random.randint(1,99)
+        if pokeball.name == player1.inventory.pokeballs[0].name and randomChances < pokeball.catchRate:
+            player1.inventory.pokeballs[0].nbrInInventory = player1.inventory.pokeballs[0].nbrInInventory - 1
+            player1.pokemons.append(target)
+            closeWildCombat()
+        if pokeball.name == player1.inventory.pokeballs[1].name and randomChances < pokeball.catchRate:
+            player1.inventory.pokeballs[1].nbrInInventory = player1.inventory.pokeballs[1].nbrInInventory - 1
+            player1.pokemons.append(target)
+            closeWildCombat()
+        if pokeball.name == player1.inventory.pokeballs[2].name and randomChances < pokeball.catchRate:
+            player1.inventory.pokeballs[2].nbrInInventory = player1.inventory.pokeballs[2].nbrInInventory - 1
+            player1.pokemons.append(target)
+            closeWildCombat()
+        if pokeball.name == player1.inventory.pokeballs[3].name and randomChances < pokeball.catchRate:
+            player1.inventory.pokeballs[3].nbrInInventory = player1.inventory.pokeballs[3].nbrInInventory - 1
+            player1.pokemons.append(target)
+            closeWildCombat()
 
+
+    global informationString
     informationString = ""
-    while wildCombatIsRunning == True:            
+    while wildCombatIsRunning == True:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -222,49 +261,68 @@ def openWildCombat():
                 if event.key == pygame.K_e:
                     closeWildCombat()
 
-            while turn == 1:
+            # Si turn==1 alors tour du pokémon du joueur 1.
+            if turn == 1:
                 # Déroulement du combat.
-                combatTextFont = pygame.font.SysFont("courier",20)
-                informationString = "It's your turn."
-                informationText = combatTextFont.render(informationString, True, BLACK)
-                gameDisplay.blit(informationText, [510,350])
                 
                 # Boutons d'attaque du joueur 1.
                 attack1PlayerNameString = player1CurrentPokemon.attacks[0].name
                 attack1PlayerButton = Button([5,450], [190,90], LIGHTGREY, attack1PlayerNameString)
                 attack1PlayerButton.draw(gameDisplay)
                 if attack1PlayerButton.is_clicked(event, gameDisplay):
-                    attackSystem(player1CurrentPokemon.attacks[0], wildPokemon)
+                    attackSystem(player1CurrentPokemon.attacks[0], wildPokemon, turn)
                 attack2PlayerNameString = wildPokemon.attacks[1].name
                 attack2PlayerButton = Button([200,545], [190,90], LIGHTGREY, attack2PlayerNameString)
                 attack2PlayerButton.draw(gameDisplay)
                 if attack2PlayerButton.is_clicked(event, gameDisplay):
-                    attackSystem(attack1PlayerNameString.attacks[1], wildPokemon)
+                    attackSystem(player1CurrentPokemon.attacks[1], wildPokemon, turn)
                 attack3PlayerNameString = player1CurrentPokemon.attacks[2].name
                 attack3PlayerButton = Button([5,545], [190,90], LIGHTGREY, attack3PlayerNameString)
                 attack3PlayerButton.draw(gameDisplay)
                 if attack3PlayerButton.is_clicked(event, gameDisplay):
-                    attackSystem(attack1PlayerNameString.attacks[2], wildPokemon)
+                    attackSystem(attack1PlayerNameString.attacks[2], wildPokemon, turn)
                 attack4PlayerNameString = player1CurrentPokemon.attacks[3].name
                 attack4PlayerButton = Button([200,450], [190,90], LIGHTGREY, attack4PlayerNameString)
                 attack4PlayerButton.draw(gameDisplay)
                 if attack4PlayerButton.is_clicked(event, gameDisplay):
-                    attackSystem(attack1PlayerNameString.attacks[3], wildPokemon)
+                    attackSystem(player1CurrentPokemon.attacks[3], wildPokemon, turn)
 
-        while turn == 2:
+                # Boutons de capture avec pokéballs du joueur 1.
+                if player1.inventory.pokeballs[0].nbrInInventory > 0:
+                    pokeball1PlayerNameString = str(player1.inventory.pokeballs[0].name + " x" + str(player1.inventory.pokeballs[0].nbrInInventory))
+                    pokeball1PlayerButton = Button([410,450], [170,85], LIGHTGREY, pokeball1PlayerNameString)
+                    pokeball1PlayerButton.draw(gameDisplay)
+                    if pokeball1PlayerButton.is_clicked(event, gameDisplay):
+                        catchSystem(player1.inventory.pokeballs[0], wildPokemon)
+                if player1.inventory.pokeballs[1].nbrInInventory > 0:
+                    pokeball2PlayerNameString = pokeballAndQuantity = str(player1.inventory.pokeballs[1].name + " x" + str(player1.inventory.pokeballs[1].nbrInInventory))
+                    pokeball2PlayerButton = Button([600,450], [170,85], LIGHTGREY, pokeball2PlayerNameString)
+                    pokeball2PlayerButton.draw(gameDisplay)
+                    if pokeball2PlayerButton.is_clicked(event, gameDisplay):
+                        catchSystem(player1.inventory.pokeballs[1], wildPokemon)
+                if player1.inventory.pokeballs[2].nbrInInventory > 0:
+                    pokeball3PlayerNameString = pokeballAndQuantity = str(player1.inventory.pokeballs[2].name + " x" + str(player1.inventory.pokeballs[2].nbrInInventory))
+                    pokeball3PlayerButton = Button([410,540], [170,85], LIGHTGREY, pokeball3PlayerNameString)
+                    pokeball3PlayerButton.draw(gameDisplay)
+                    if pokeball3PlayerButton.is_clicked(event, gameDisplay):
+                        catchSystem(player1.inventory.pokeballs[2], wildPokemon)
+                if player1.inventory.pokeballs[3].nbrInInventory > 0:
+                    pokeball4PlayerNameString = pokeballAndQuantity = str(player1.inventory.pokeballs[3].name + " x" + str(player1.inventory.pokeballs[3].nbrInInventory))
+                    pokeball4PlayerButton = Button([600,540], [170,85], LIGHTGREY, pokeball4PlayerNameString)
+                    pokeball4PlayerButton.draw(gameDisplay)
+                    if pokeball4PlayerButton.is_clicked(event, gameDisplay):
+                        catchSystem(player1.inventory.pokeballs[3], wildPokemon)
+
+
+        # Si turn==2 alors tour du pokémon sauvage.
+        if turn == 2:
                 # Déroulement du combat.
-                            
-                button("Attack",700,505,100,45,GREY,SILVER,openInventory)
-                #button("Bag",700,505,100,45,GREY,SILVER,openInventory)
-                button("Catch",700,550,100,45,GREY,SILVER,closeWildCombat)
-                button("Run",700,595,100,45,GREY,SILVER,closeWildCombat)
-                
+
                 combatTextFont = pygame.font.SysFont("courier",20)
-                informationString = "It's wild Pokemon's turn."
                 informationText = combatTextFont.render(informationString, True, BLACK)
                 gameDisplay.blit(informationText, [510,350])
                 randomAttack = random.randint(0,3)
-                attackSystem(wildPokemon.attacks[randomAttack], player1currentPokemon)
+                attackSystem(wildPokemon.attacks[randomAttack], player1currentPokemon, turn)
 
         pygame.display.update()
         clock.tick(15)  
@@ -390,6 +448,8 @@ def game_loop():
     global player2
     player2 = Player()
     player2.initializePlayerInventory()
+    global turn
+    turn = 1
 
     #Point d'apparition du joueur 1.
     x = (display_width * 0.45)
