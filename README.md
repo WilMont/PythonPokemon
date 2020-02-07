@@ -1,4 +1,6 @@
 # PythonPokemon
+MONTAGNE Wilfried - LOIAL Yohann - MAZOYER Antoine - [B3 Classe 2]
+
 
 ## Fonctionnalités:
 * Déplacement ✔️
