@@ -1,6 +1,6 @@
 # PythonPokemon
 MONTAGNE Wilfried - LOIAL Yoann - MAZOYER Antoine - [B3 Classe 2]
-URL de téléchargement WeTransfer: https://we.tl/t-9XQIH095ib
+- URL de téléchargement WeTransfer: https://we.tl/t-9XQIH095ib
 
 
 ## Fonctionnalités:
