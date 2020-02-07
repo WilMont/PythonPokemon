@@ -257,7 +257,7 @@ def openWildCombat():
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_e:
+                if event.key == pygame.K_q:
                     closeWildCombat()
 
             # Si turn==1 alors tour du pokémon du joueur 1.
