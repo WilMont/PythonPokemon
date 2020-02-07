@@ -1,5 +1,5 @@
 # PythonPokemon
-MONTAGNE Wilfried - LOIAL Yohann - MAZOYER Antoine - [B3 Classe 2]
+MONTAGNE Wilfried - LOIAL Yoann - MAZOYER Antoine - [B3 Classe 2]
 
 
 ## Fonctionnalités:
