@@ -26,7 +26,7 @@
 ![Commencer un combat](https://raw.githubusercontent.com/WilMont/PythonPokemon/master/ImagesGuide/Combat.jpg)
 
 - Présentation de l'interface, avec la partie gauche du menu pour les attaques et la partie droite pour les pokéballs disponibles.
-![Combattre ou capturer un Pokmon](https://raw.githubusercontent.com/WilMont/PythonPokemon/master/ImagesGuide/Combat.jpg)
+![Combattre ou capturer un Pokemon](https://github.com/WilMont/PythonPokemon/blob/master/ImagesGuide/Combat.JPG)
 
 - Vous pouvez intéragir avec la touche "I" (Inventaire) de votre clavier pour ouvrir l'inventaire.
 ![Inventaire](https://raw.githubusercontent.com/WilMont/PythonPokemon/master/ImagesGuide/Inventaire.jpg)
