@@ -12,7 +12,7 @@ import io
  
 pygame.init()
  
-background_image = pygame.image.load('ProjetFinalPython/img/BackgroundCity3.png')
+background_image = pygame.image.load('ProjetFinalPython/img/BackgroundCity2.png')
 spriteSheet = pygame.image.load("ProjetFinalPython/img/PlayerMovementSpritesheet.png")
 
 
@@ -217,8 +217,7 @@ def openWildCombat():
             informationString = "You won $200 !"
             informationText = combatTextFont.render(informationString, True, BLACK)
             gameDisplay.blit(informationText, [510,370])
-            informationString = "Press A to continue"
-            informationText = combatTextFont.render(informationString, True, BLACK)
+            closeWildCombat()
             gameDisplay.blit(informationText, [510,390])
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q:
@@ -477,14 +476,20 @@ def game_loop():
         hitboxArbresBasDroite1 = InvisibleObject(582, 390, 218, 255, gameDisplay, YELLOW)
         hitboxArbresBasDroite2 = InvisibleObject(517, 585, 283, 60, gameDisplay, YELLOW)
         #Zone de rencontre de pokémons sauvages (hautes herbes).
-        zoneCapturePokemon = InvisibleObject(200, 585, 283, 60, gameDisplay, RED)
+        zoneCapturePokemon = InvisibleObject(120, 585, 400, 60, gameDisplay, RED)
         #Zone du magasin.
         zoneShop = InvisibleObject(452, 190, 30, 50, gameDisplay, BLUE)
 
+        # Appui sur la touche A (Action) avec le personnage sur la porte de la boutique pour accéder au magasin.
         if player1.posX > 452 and player1.posX < 482 and player1.posY > 190 and player1.posY < 240:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_q: #Pygame est conçu pour du QWERTY donc ici "q"="a" sur un clavier AZERTY.
                     openShop()
+        # Appui sur la touche A (Action) avec le personnage dans la zone de capture pour trouver un pokémon sauvage.
+        if player1.posX > 120 and player1.posX < 520 and player1.posY > 585 and player1.posY < 645:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q: #Pygame est conçu pour du QWERTY donc ici "q"="a" sur un clavier AZERTY.
+                    openWildCombat()
 
         
  
@@ -512,8 +517,6 @@ def game_loop():
                 if event.key == pygame.K_i and inventoryIsOpen == False:
                     openInventory()
                 #Déclenchement d'un combat contre Pokemon sauvage.
-                if event.key == pygame.K_e and wildCombatIsRunning == False:
-                    openWildCombat()
  
             #Faire en sorte que le personnage ne bouge plus quand on lâche la touche.
             if event.type == pygame.KEYUP:
