@@ -2,6 +2,8 @@ import pygame
 from Parametres import *
 import requests
 
+## CLASSES ##
+
 class Player():
     def __init__(self):
         #self.name = name
@@ -33,6 +35,7 @@ class Player():
         self.inventory.pokeballs.append(greatball)
         self.inventory.pokeballs.append(ultraball)
         self.inventory.pokeballs.append(masterball)
+        self.inventory.pokeballs[0].nbrInInventory = 10
 
 """
 Class InvisibleObject (used to create invisible walls and objects).
@@ -97,11 +100,12 @@ Parameters:
 - nbrInInventory: number of pokeballs of this type in the player inventory.
 """
 class Pokeball():
-    def __init__(self, id, name, description, catchRate):
+    def __init__(self, id, name, description, catchRate, price):
         self.id = id
         self.name = name
         self.description = description
         self.catchRate = catchRate
+        self.price = price
         self.nbrInInventory = 0
 
 """
@@ -115,8 +119,53 @@ class Inventory():
         self.pokeballs = [createPokeballFromAPI('poke-ball'), createPokeballFromAPI('great-ball'), createPokeballFromAPI('ultra-ball'), createPokeballFromAPI('master-ball')]
         #self.pokeballs = [masterBall, ultraBall.......]
 
+"""
+Class Button.
+Properties:
+- position: the position of the button, can be written like this: [x,y].
+- size: width and height of the button, can be written like this: [width,height].
+- color: color of the background of the button.
+- text: the text to be displayed on the button.
+"""
+class Button(object):
+    def __init__(self, position, size, color, text):
+
+        self.image = pygame.Surface(size)
+        self.image.fill(color)
+        self.text = text
+        self.rect = pygame.Rect((0,0), size)
+        self.color = color
+
+        font = pygame.font.SysFont("courier", 20)
+        text = font.render(text, True, (0,0,0))
+        text_rect = text.get_rect()
+        text_rect.center = self.rect.center
+
+        self.image.blit(text, text_rect)
+
+        # set after centering text
+        self.rect.topleft = position
+
+        mouse = pygame.mouse.get_pos()
 
 
+    def draw(self, screen):
+        screen.blit(self.image, self.rect)
+
+    def is_clicked(self, event, screen):
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                self.image.fill(WHITE)
+                screen.blit(self.image, self.rect)
+                self.image.fill(self.color)
+                screen.blit(self.image, self.rect)
+                return self.rect.collidepoint(event.pos)
+
+
+## FONCTIONS ##
+
+# Récupérer les informations d'un pokémon grâce à l'API et instancier un pokémon avec ces informations.
+#Paramètre: id du pokémon dans l'API (1 pour Bulbizarre par exemple).
 def createPokemonFromAPI(chosenPokemonID):
     pokemonResponse = requests.get("https://pokeapi.co/api/v2/pokemon/" + str(chosenPokemonID) + "/")
     pokemonResponseJson  = pokemonResponse.json()
@@ -178,6 +227,7 @@ def createPokemonFromAPI(chosenPokemonID):
     # Créé l'objet du Pokemon correspondant et lui ajoute ses attaques correspondantes.
     return Pokemon(pokemonId, pokemonName, 100, [attack1, attack2, attack3, attack4], pokemonSpriteFront, pokemonSpriteBack)
 
+# Récupérer les informations d'une pokéball grâce à l'API et instancier une pokéball avec ces informations.
 #Paramètre: type de pokéball [poke-ball, great-ball, ultra-ball, master-ball]
 def createPokeballFromAPI(pokeballName):
     pokeballResponse = requests.get("https://pokeapi.co/api/v2/item/" + pokeballName + "/")
@@ -186,13 +236,27 @@ def createPokeballFromAPI(pokeballName):
     if pokeballName == "poke-ball":
         pokeballDescription = "A device for catching wild Pokémon. It’s thrown like ball at a Pokémon, comfortably encapsulating its target."
         pokeballCatchRate = 30
+        pokeballPrice = 200
     elif pokeballName == "great-ball":
         pokeballDescription = "A good, high-performance Poké Ball that provides higher Pokémon catch rate than a standard Poké Ball."
         pokeballCatchRate = 50
+        pokeballPrice = 500
     elif pokeballName == "ultra-ball":
         pokeballDescription = "An ultra-high-performance Poké Ball that provides higher success rate for catching Pokémon than Great Ball."
         pokeballCatchRate = 70
+        pokeballPrice = 1000
     elif pokeballName == "master-ball":
         pokeballDescription = "The best Poké Ball with the ultimate level of performance. With it, you will catch any wild Pokémon without fail."
         pokeballCatchRate = 100
-    return Pokeball(pokeballId, pokeballName, pokeballDescription, pokeballCatchRate)
+        pokeballPrice = 2000
+    return Pokeball(pokeballId, pokeballName, pokeballDescription, pokeballCatchRate, pokeballPrice)
+
+# Retourne le premier pokémon vivant présent dans l'équipe du joueur passé en paramètre.
+def setCurrentPokemon(player: Player):
+    currentPokemon = Pokemon(0, "name", "100", [], "frontSprite", "backSprite")
+    for pokemon in player.pokemons:
+        if pokemon.currentHp == 0:
+            pass
+        elif pokemon.currentHp > 0:
+            currentPokemon = pokemon
+    return currentPokemon

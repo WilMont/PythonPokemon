@@ -12,7 +12,7 @@ import io
  
 pygame.init()
  
-background_image = pygame.image.load('ProjetFinalPython/img/BackgroundCity3.png').convert()
+background_image = pygame.image.load('ProjetFinalPython/img/BackgroundCity3.png')
 spriteSheet = pygame.image.load("ProjetFinalPython/img/PlayerMovementSpritesheet.png")
 
 
@@ -89,7 +89,7 @@ def openInventory():
     pokeballCategoryFont = pygame.font.SysFont("courier",20)
     pokeballCategoryText = pokeballCategoryFont.render("Pokeballs", True, BLACK)
     gameDisplay.blit(pokeballCategoryText, [150,55])
-
+    # Affichage des pokéballs dans l'inventaire.
     pokeballAndQuantity = str("- " + player1.inventory.pokeballs[0].name + " x" + str(player1.inventory.pokeballs[0].nbrInInventory))
     greatballAndQuantity = str("- " + player1.inventory.pokeballs[1].name + " x" + str(player1.inventory.pokeballs[1].nbrInInventory))
     ultraballAndQuantity = str("- " + player1.inventory.pokeballs[2].name + " x" + str(player1.inventory.pokeballs[2].nbrInInventory))
@@ -104,6 +104,11 @@ def openInventory():
     inventoryItemsText = inventoryItemsFont.render(masterballAndQuantity, True, BLACK)
     gameDisplay.blit(inventoryItemsText, [400,190])
 
+    moneyString = str("$" + str(player1.money))
+    inventoryItemsFont = pygame.font.SysFont("courier",20)
+    moneyText = inventoryItemsFont.render(moneyString, True, BLACK)
+    gameDisplay.blit(moneyText, [400,500])
+
 
     
 
@@ -113,7 +118,7 @@ def openInventory():
                 pygame.quit()
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_q:
+                if event.key == pygame.K_i:
                     closeInventory()
         
 
@@ -136,24 +141,32 @@ def openWildCombat():
     # Variable turn=1 si tour du joueur1, turn=2 si tour du pokemon sauvage.
     turn = 1
 
-    global wildPokemonFighting
-    wildPokemonFighting = True
-
-    gameDisplay.fill(WHITE)
+    combatBackgroundImage = pygame.image.load('ProjetFinalPython/img/combatBackground.png')
+    gameDisplay.blit(combatBackgroundImage, [0,0])
     randomID = random.randint(1,10)
     wildPokemon = createPokemonFromAPI(randomID)
 
     # Va chercher l'url de l'image du pokémon du joueur 1 et convertit en image pour pygame.
-    player1PokemonBackSpriteURL = player1.pokemons[0].backSprite
+    player1CurrentPokemon = setCurrentPokemon(player1)
+    player1PokemonBackSpriteURL = player1CurrentPokemon.backSprite
     player1PokemonBackSpriteSTR = urlopen(player1PokemonBackSpriteURL).read()
     player1PokemonBackSpriteFile = io.BytesIO(player1PokemonBackSpriteSTR)
     player1PokemonBackSpriteImage = pygame.image.load(player1PokemonBackSpriteFile)
-    gameDisplay.blit(player1PokemonBackSpriteImage, [75,350])
+    gameDisplay.blit(player1PokemonBackSpriteImage, [75,260])
+    # Nom du pokémon du joueur 1.
+    combatTextFont = pygame.font.SysFont("courier",20)
+    player1PokemonNameText = combatTextFont.render(player1CurrentPokemon.name, True, BLACK)
+    gameDisplay.blit(player1PokemonNameText, [70,230])
+    # Points de vie du pokémon du joueur 1 sous forme "PV/PVMAX".
+    combatTextFont = pygame.font.SysFont("courier",10)
+    player1PokemonHpString = str(str(player1CurrentPokemon.currentHp) + "/" + str(player1CurrentPokemon.baseHp))
+    player1PokemonHpText = combatTextFont.render(player1PokemonHpString, True, BLACK)
+    gameDisplay.blit(player1PokemonHpText, [10,250])
     # Barre de vie du pokémon du joueur 1.
     healthbarPokemonPlayer1 = pygame.Surface((100,10))
     healthbarPokemonPlayer1.fill(GREEN)
-    gameDisplay.blit(healthbarPokemonPlayer1, [70,340])
-    pygame.draw.rect(gameDisplay, BLACK, (70, 340, 100, 10), 2)
+    gameDisplay.blit(healthbarPokemonPlayer1, [70,250])
+    pygame.draw.rect(gameDisplay, BLACK, (70, 250, 100, 10), 2)
 
     # Va chercher l'url de l'image du pokémon du sauvage et convertit en image pour pygame.
     wildPokemonFrontSpriteURL = wildPokemon.frontSprite
@@ -161,30 +174,45 @@ def openWildCombat():
     wildPokemonFrontSpriteFile = io.BytesIO(wildPokemonFrontSpriteSTR)
     wildPokemonFrontSpriteImage = pygame.image.load(wildPokemonFrontSpriteFile)
     gameDisplay.blit(wildPokemonFrontSpriteImage, [600,100])
+    # Nom du pokémon sauvage.
+    combatTextFont = pygame.font.SysFont("courier",20)
+    wildPokemonNameText = combatTextFont.render(wildPokemon.name, True, BLACK)
+    gameDisplay.blit(wildPokemonNameText, [595,70])
     # Barre de vie du pokémon sauvage.
+    wildPokemonCurrentHp = wildPokemon.currentHp
     healthbarWildPokemon = pygame.Surface((100,10))
     healthbarWildPokemon.fill(GREEN)
     gameDisplay.blit(healthbarWildPokemon, [595,90])
-    pygame.draw.rect(gameDisplay, BLACK, (595, 90, 100, 10), 2)
+    pygame.draw.rect(gameDisplay, BLACK, (595, 90, wildPokemonCurrentHp, 10), 2)
 
     # Interface grise en bas de l'écran.
     pygame.draw.rect(gameDisplay, GREY, (0, 445, 800, 200), 5)
+    rectangleMenu1 = pygame.Surface((800,200))
+    rectangleMenu1.fill(WHITE)
+    gameDisplay.blit(rectangleMenu1, (0,445))
     pygame.draw.rect(gameDisplay, GREY, (0, 445, 700, 200), 5) # Rectangle de gauche contenant les attaques du pokémon ou les pokeballs.
-    pygame.draw.rect(gameDisplay, GREY, (0, 445, 500, 200), 5)
+    rectangleMenu2 = pygame.Surface((700,200))
+    rectangleMenu2.fill(WHITE)
+    gameDisplay.blit(rectangleMenu2, (0,445))
     pygame.draw.rect(gameDisplay, GREY, (500, 345, 300, 100), 5) # Rectangle contenant les informations sur le combat (tour de quel joueur, efficacité d'une attaque...).
+    rectangleMenu3 = pygame.Surface((300,100))
+    rectangleMenu3.fill(WHITE)
+    gameDisplay.blit(rectangleMenu3, (500,345))
+    pygame.draw.rect(gameDisplay, GREY, (0, 445, 400, 200), 5)
+
+    def attackSystem(attack: Attack, target: Pokemon):
+        target.currentHp = target.currentHp - attack.power
+        if target.currentHp == 0 or target.currentHp < 0:
+            informationString = "The opponent Pokemon is K.O. \n You won $200"
+            gameDisplay.blit(informationText, [510,350])
+        elif target.currentHp > 0 and turn == 1:
+            turn = 2
+        elif target.currentHp > 0 and turn == 2:
+            turn = 1
 
 
-    while wildCombatIsRunning == True:
-        # Déroulement du combat.
-        combatTextFont = pygame.font.SysFont("courier",20)
-        informationText = combatTextFont.render("It's player 1 turn", True, BLACK)
-        gameDisplay.blit(informationText, [510,350])
-
-        button("Attack",700,505,100,45,GREY,SILVER,attackSystem)
-        #button("Bag",700,505,100,45,GREY,SILVER,openInventory)
-        button("Catch",700,550,100,45,GREY,SILVER,closeWildCombat)
-        button("Run",700,595,100,45,GREY,SILVER,closeWildCombat)
-
+    informationString = ""
+    while wildCombatIsRunning == True:            
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -194,11 +222,132 @@ def openWildCombat():
                 if event.key == pygame.K_e:
                     closeWildCombat()
 
+            while turn == 1:
+                # Déroulement du combat.
+                combatTextFont = pygame.font.SysFont("courier",20)
+                informationString = "It's your turn."
+                informationText = combatTextFont.render(informationString, True, BLACK)
+                gameDisplay.blit(informationText, [510,350])
+                
+                # Boutons d'attaque du joueur 1.
+                attack1PlayerNameString = player1CurrentPokemon.attacks[0].name
+                attack1PlayerButton = Button([5,450], [190,90], LIGHTGREY, attack1PlayerNameString)
+                attack1PlayerButton.draw(gameDisplay)
+                if attack1PlayerButton.is_clicked(event, gameDisplay):
+                    attackSystem(player1CurrentPokemon.attacks[0], wildPokemon)
+                attack2PlayerNameString = wildPokemon.attacks[1].name
+                attack2PlayerButton = Button([200,545], [190,90], LIGHTGREY, attack2PlayerNameString)
+                attack2PlayerButton.draw(gameDisplay)
+                if attack2PlayerButton.is_clicked(event, gameDisplay):
+                    attackSystem(attack1PlayerNameString.attacks[1], wildPokemon)
+                attack3PlayerNameString = player1CurrentPokemon.attacks[2].name
+                attack3PlayerButton = Button([5,545], [190,90], LIGHTGREY, attack3PlayerNameString)
+                attack3PlayerButton.draw(gameDisplay)
+                if attack3PlayerButton.is_clicked(event, gameDisplay):
+                    attackSystem(attack1PlayerNameString.attacks[2], wildPokemon)
+                attack4PlayerNameString = player1CurrentPokemon.attacks[3].name
+                attack4PlayerButton = Button([200,450], [190,90], LIGHTGREY, attack4PlayerNameString)
+                attack4PlayerButton.draw(gameDisplay)
+                if attack4PlayerButton.is_clicked(event, gameDisplay):
+                    attackSystem(attack1PlayerNameString.attacks[3], wildPokemon)
 
+        while turn == 2:
+                # Déroulement du combat.
+                            
+                button("Attack",700,505,100,45,GREY,SILVER,openInventory)
+                #button("Bag",700,505,100,45,GREY,SILVER,openInventory)
+                button("Catch",700,550,100,45,GREY,SILVER,closeWildCombat)
+                button("Run",700,595,100,45,GREY,SILVER,closeWildCombat)
+                
+                combatTextFont = pygame.font.SysFont("courier",20)
+                informationString = "It's wild Pokemon's turn."
+                informationText = combatTextFont.render(informationString, True, BLACK)
+                gameDisplay.blit(informationText, [510,350])
+                randomAttack = random.randint(0,3)
+                attackSystem(wildPokemon.attacks[randomAttack], player1currentPokemon)
 
         pygame.display.update()
         clock.tick(15)  
+
+
+def closeShop():
+    global shopIsOpen
+    shopIsOpen = False
+
+def openShop():
+    global shopIsOpen
+    shopIsOpen = True
+
+    def buyAPokeball(boughtPokeball: Pokeball):
+            player1.money = player1.money - boughtPokeball.price
+            for playerPokeball in player1.inventory.pokeballs:
+                if playerPokeball.name == boughtPokeball.name:
+                    playerPokeball.nbrInInventory = playerPokeball.nbrInInventory + 1
     
+    while shopIsOpen == True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q: #Pygame est conçu pour du QWERTY donc ici "q"="a" sur un clavier AZERTY.
+                    closeShop()
+            # Boutons d'achat des pokéballs.
+            # Bouton d'achat d'une pokéball.
+            buyPokeballString = str(player1.inventory.pokeballs[0].name + " $" + str(player1.inventory.pokeballs[0].price))
+            buyPokeballButton = Button([400,100], [200,30], LIGHTGREY, buyPokeballString)
+            buyPokeballButton.draw(gameDisplay)
+            if buyPokeballButton.is_clicked(event, gameDisplay):
+                if player1.money == player1.inventory.pokeballs[0].price or player1.money > player1.inventory.pokeballs[0].price:
+                    buyAPokeball(player1.inventory.pokeballs[0])
+                elif player1.money < player1.inventory.pokeballs[0].price:
+                    buyPokeballButton.text = "Not enough money"
+                    buyPokeballButton.draw(gameDisplay)
+            # Bouton d'achat d'une greatball.
+            buyGreatballString = str(player1.inventory.pokeballs[1].name + " $" + str(player1.inventory.pokeballs[1].price))
+            buyGreatballButton = Button([400,130], [200,30], LIGHTGREY, buyGreatballString)
+            buyGreatballButton.draw(gameDisplay)
+            if buyGreatballButton.is_clicked(event, gameDisplay):
+                if player1.money == player1.inventory.pokeballs[1].price or player1.money > player1.inventory.pokeballs[1].price:
+                    buyAPokeball(player1.inventory.pokeballs[1])
+                elif player1.money < player1.inventory.pokeballs[1].price:
+                    buyPokeballButton.text = "Not enough money"
+                    buyPokeballButton.draw(gameDisplay)
+            # Bouton d'achat d'une ultraball.
+            buyUltraballString = str(player1.inventory.pokeballs[2].name + " $" + str(player1.inventory.pokeballs[2].price))
+            buyUltraballButton = Button([400,160], [200,30], LIGHTGREY, buyUltraballString)
+            buyUltraballButton.draw(gameDisplay)
+            if buyUltraballButton.is_clicked(event, gameDisplay):
+                if player1.money == player1.inventory.pokeballs[2].price or player1.money > player1.inventory.pokeballs[2].price:
+                    buyAPokeball(player1.inventory.pokeballs[2])
+                elif player1.money < player1.inventory.pokeballs[2].price:
+                    buyPokeballButton.text = "Not enough money"
+                    buyPokeballButton.draw(gameDisplay)
+            # Bouton d'achat d'une masterball.
+            buyMasterballString = str(player1.inventory.pokeballs[3].name + " $" + str(player1.inventory.pokeballs[3].price))
+            buyMasterballButton = Button([400,190], [200,30], LIGHTGREY, buyMasterballString)
+            buyMasterballButton.draw(gameDisplay)
+            if buyPokeballButton.is_clicked(event, gameDisplay):
+                if player1.money == player1.inventory.pokeballs[3].price or player1.money > player1.inventory.pokeballs[3].price:
+                    buyAPokeball(player1.inventory.pokeballs[3])
+                elif player1.money < player1.inventory.pokeballs[3].price:
+                    buyPokeballButton.text = "Not enough money"
+                    buyPokeballButton.draw(gameDisplay)
+
+
+            shopItemsFont = pygame.font.SysFont("courier",20)
+            shopItemsText = shopItemsFont.render("SHOP", True, BLACK)
+            gameDisplay.blit(shopItemsText, [400,80])
+            closeShopButton = Button([400,220], [200,30], LIGHTGREY, "Close")
+            closeShopButton.draw(gameDisplay)
+            if closeShopButton.is_clicked(event, gameDisplay):
+                closeShop()
+
+        pygame.display.update()
+        clock.tick(15)
+
+
+
 
 def startScreen():
 
@@ -229,6 +378,8 @@ def game_loop():
     inventoryIsOpen = False
     global wildCombatIsRunning
     wildCombatIsRunning = False
+    global shopIsOpen
+    shopIsOpen = False
 
     #Initialisation des joueurs.
     global player1
@@ -267,6 +418,13 @@ def game_loop():
         hitboxArbresBasDroite2 = InvisibleObject(517, 585, 283, 60, gameDisplay, YELLOW)
         #Zone de rencontre de pokémons sauvages (hautes herbes).
         zoneCapturePokemon = InvisibleObject(200, 585, 283, 60, gameDisplay, RED)
+        #Zone du magasin.
+        zoneShop = InvisibleObject(452, 190, 30, 50, gameDisplay, BLUE)
+
+        if player1.posX > 452 and player1.posX < 482 and player1.posY > 190 and player1.posY < 240:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_q: #Pygame est conçu pour du QWERTY donc ici "q"="a" sur un clavier AZERTY.
+                    openShop()
 
         
  
@@ -291,7 +449,7 @@ def game_loop():
                     y_change = 2
                     player1.img = player1.getImgFromSpritesheet(0, 23, 14, 21, spriteSheet)
                 #Ouverture et fermeture de l'inventaire.
-                if event.key == pygame.K_q and inventoryIsOpen == False:
+                if event.key == pygame.K_i and inventoryIsOpen == False:
                     openInventory()
                 #Déclenchement d'un combat contre Pokemon sauvage.
                 if event.key == pygame.K_e and wildCombatIsRunning == False:
@@ -310,9 +468,6 @@ def game_loop():
 
         player1.posX = x
         player1.posY = y
- 
-        if x > display_width - player_width or x < 0:
-            perdre()
 
         
         pygame.display.update()
