@@ -1,6 +1,5 @@
 # PythonPokemon
-MONTAGNE Wilfried - LOIAL Yoann - MAZOYER Antoine - [B3 Classe 2]
-- URL de téléchargement WeTransfer: https://we.tl/t-9XQIH095ib
+MONTAGNE Wilfried - LOIAL Yoann - MAZOYER Antoine
 
 
 ## Fonctionnalités:
@@ -14,7 +13,7 @@ MONTAGNE Wilfried - LOIAL Yoann - MAZOYER Antoine - [B3 Classe 2]
 * Pokédex ❌
 
 ## Guide:
-- ⚠️ Il est recommandé d'utiliser Visual Studio 2019 pour être sûr du bon fonctionnement.
+- ⚠️ Il est recommandé d'utiliser au minimum Visual Studio 2019 pour être sûr du bon fonctionnement.
 
 - ⚠️ Pour que Visual Studio trouve bien tous les fichiers, il faut changer l'affichage en cliquant sur l'icone montrée dans l'image suivante puis cliquer sur "Affichage des dossiers".
 ![Icone à cliquer](https://github.com/WilMont/PythonPokemon/blob/master/ImagesGuide/guideFichiers.JPG)
